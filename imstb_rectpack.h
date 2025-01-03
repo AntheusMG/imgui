@@ -192,7 +192,7 @@ struct stbrp_context
    int num_nodes;
    stbrp_node *active_head;
    stbrp_node *free_head;
-   stbrp_node extra[2]; // we allocate two extra nodes so optimal user-node-count is 'width' not 'width+2'
+   stbrp_node Extra[2]; // we allocate two extra nodes so optimal user-node-count is 'width' not 'width+2'
 };
 
 #ifdef __cplusplus
@@ -272,19 +272,19 @@ STBRP_DEF void stbrp_init_target(stbrp_context *context, int width, int height, 
    context->init_mode = STBRP__INIT_skyline;
    context->heuristic = STBRP_HEURISTIC_Skyline_default;
    context->free_head = &nodes[0];
-   context->active_head = &context->extra[0];
+   context->active_head = &context->Extra[0];
    context->width = width;
    context->height = height;
    context->num_nodes = num_nodes;
    stbrp_setup_allow_out_of_mem(context, 0);
 
    // node 0 is the full width, node 1 is the sentinel (lets us not store width explicitly)
-   context->extra[0].x = 0;
-   context->extra[0].y = 0;
-   context->extra[0].next = &context->extra[1];
-   context->extra[1].x = (stbrp_coord) width;
-   context->extra[1].y = (1<<30);
-   context->extra[1].next = NULL;
+   context->Extra[0].x = 0;
+   context->Extra[0].y = 0;
+   context->Extra[0].next = &context->Extra[1];
+   context->Extra[1].x = (stbrp_coord) width;
+   context->Extra[1].y = (1<<30);
+   context->Extra[1].next = NULL;
 }
 
 // find minimum y position if it starts at x1

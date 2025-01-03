@@ -346,17 +346,17 @@ static bool ImGui_ImplGlfw_ShouldChainCallback(GLFWwindow* window)
     return bd->CallbacksChainForAllWindows ? true : (window == bd->Window);
 }
 
-void ImGui_ImplGlfw_MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
+void ImGui_ImplGlfw_MouseButtonCallback(GLFWwindow* window, int button, int actionType, int mods)
 {
     ImGui_ImplGlfw_Data* bd = ImGui_ImplGlfw_GetBackendData();
     if (bd->PrevUserCallbackMousebutton != nullptr && ImGui_ImplGlfw_ShouldChainCallback(window))
-        bd->PrevUserCallbackMousebutton(window, button, action, mods);
+        bd->PrevUserCallbackMousebutton(window, button, actionType, mods);
 
     ImGui_ImplGlfw_UpdateKeyModifiers(window);
 
     ImGuiIO& io = ImGui::GetIO();
     if (button >= 0 && button < ImGuiMouseButton_COUNT)
-        io.AddMouseButtonEvent(button, action == GLFW_PRESS);
+        io.AddMouseButtonEvent(button, actionType == GLFW_PRESS);
 }
 
 void ImGui_ImplGlfw_ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
@@ -407,25 +407,25 @@ static int ImGui_ImplGlfw_TranslateUntranslatedKey(int key, int scancode)
     return key;
 }
 
-void ImGui_ImplGlfw_KeyCallback(GLFWwindow* window, int keycode, int scancode, int action, int mods)
+void ImGui_ImplGlfw_KeyCallback(GLFWwindow* window, int keycode, int scancode, int actionType, int mods)
 {
     ImGui_ImplGlfw_Data* bd = ImGui_ImplGlfw_GetBackendData();
     if (bd->PrevUserCallbackKey != nullptr && ImGui_ImplGlfw_ShouldChainCallback(window))
-        bd->PrevUserCallbackKey(window, keycode, scancode, action, mods);
+        bd->PrevUserCallbackKey(window, keycode, scancode, actionType, mods);
 
-    if (action != GLFW_PRESS && action != GLFW_RELEASE)
+    if (actionType != GLFW_PRESS && actionType != GLFW_RELEASE)
         return;
 
     ImGui_ImplGlfw_UpdateKeyModifiers(window);
 
     if (keycode >= 0 && keycode < IM_ARRAYSIZE(bd->KeyOwnerWindows))
-        bd->KeyOwnerWindows[keycode] = (action == GLFW_PRESS) ? window : nullptr;
+        bd->KeyOwnerWindows[keycode] = (actionType == GLFW_PRESS) ? window : nullptr;
 
     keycode = ImGui_ImplGlfw_TranslateUntranslatedKey(keycode, scancode);
 
     ImGuiIO& io = ImGui::GetIO();
     ImGuiKey imgui_key = ImGui_ImplGlfw_KeyToImGuiKey(keycode);
-    io.AddKeyEvent(imgui_key, (action == GLFW_PRESS));
+    io.AddKeyEvent(imgui_key, (actionType == GLFW_PRESS));
     io.SetKeyEventNativeData(imgui_key, keycode, scancode); // To support legacy indexing (<1.87 user code)
 }
 
